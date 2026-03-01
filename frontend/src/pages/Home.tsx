@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Zap, Users, TrendingUp } from 'lucide-react'
+import { useState } from 'react'
+import LeadCaptureForm from '@/components/LeadCaptureForm'
 
 export default function Home() {
+  const [showForm, setShowForm] = useState(false)
+
   return (
     <div className="min-h-screen bg-white">
       <header className="sticky top-0 z-50 bg-white border-b">
@@ -22,7 +26,10 @@ export default function Home() {
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Discover where you are in your founder journey and get personalized guidance to scale your business.
             </p>
-            <button className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-medium inline-flex items-center gap-2 transition">
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-medium inline-flex items-center gap-2 transition"
+            >
               Start Assessment <ArrowRight size={20} />
             </button>
           </div>
@@ -43,6 +50,20 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        {showForm && (
+          <section className="bg-gray-50 py-20">
+            <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-3xl font-bold mb-8 text-center">Get Started Today</h2>
+              <div className="bg-white p-8 rounded-lg shadow-lg">
+                <LeadCaptureForm
+                  sourcePage="home"
+                  onSuccess={() => setShowForm(false)}
+                />
+              </div>
+            </div>
+          </section>
+        )}
       </main>
 
       <footer className="border-t bg-gray-50 py-8">

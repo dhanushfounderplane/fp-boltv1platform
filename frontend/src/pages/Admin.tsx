@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import { useLeadsStore } from '@/store/leadsStore'
-import { LogOut, Plus, Search, Filter, MoreVertical } from 'lucide-react'
+import { LogOut, Plus, Search, Filter, MoreVertical, Trash2 } from 'lucide-react'
 
 export default function Admin() {
   const navigate = useNavigate()
   const { user, signOut } = useAuthStore()
-  const { leads, isLoading, fetchLeads } = useLeadsStore()
+  const { leads, isLoading, fetchLeads, deleteLead } = useLeadsStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('')
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
   useEffect(() => {
     fetchLeads()
@@ -18,6 +19,11 @@ export default function Admin() {
   const handleLogout = async () => {
     await signOut()
     navigate('/')
+  }
+
+  const handleDelete = async (id: string) => {
+    await deleteLead(id)
+    setDeleteConfirm(null)
   }
 
   const filteredLeads = leads.filter((lead) => {
@@ -144,9 +150,30 @@ export default function Admin() {
                         {new Date(lead.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                        <button className="p-2 hover:bg-gray-100 rounded transition">
-                          <MoreVertical size={16} className="text-gray-400" />
-                        </button>
+                        {deleteConfirm === lead.id ? (
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              onClick={() => handleDelete(lead.id)}
+                              className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded transition"
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              onClick={() => setDeleteConfirm(null)}
+                              className="px-3 py-1 bg-gray-300 hover:bg-gray-400 text-gray-900 text-xs rounded transition"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setDeleteConfirm(lead.id)}
+                            className="p-2 hover:bg-gray-100 rounded transition"
+                            title="Delete lead"
+                          >
+                            <Trash2 size={16} className="text-gray-400" />
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}

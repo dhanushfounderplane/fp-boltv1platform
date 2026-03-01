@@ -44,9 +44,10 @@ export const useLeadsStore = create<LeadsState>((set) => ({
         .from('leads')
         .insert([lead])
         .select()
-        .single()
+        .maybeSingle()
 
       if (error) throw error
+      if (!data) throw new Error('Failed to create lead')
       set((state) => ({ leads: [data, ...state.leads] }))
       return data
     } catch (error) {
